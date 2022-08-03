@@ -103,3 +103,6 @@ let numbers = document.querySelectorAll('.numbers');
     // I need my app to listen for another button click after the result is displayed and if the button clicked is a number, I want the screen to be cleared and only show the new input on the display. 
         })
 
+
+
+// I need to set the buttons such that after entry of the operand and the data entered is pushed to the previous screen, if the next button hit is another operand, the previous operand needs to be replaced by the last operand clicked
