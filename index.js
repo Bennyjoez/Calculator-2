@@ -14,7 +14,7 @@ let currentDisplay = document.querySelector('#current');
 
 
 
-// setting the clear button
+// setting the all clear button
 allClear.addEventListener('click', function(e) {
     e.preventDefault();
     let outputDisplay = document.querySelectorAll('input[type="text"]');
@@ -31,12 +31,21 @@ allClear.addEventListener('click', function(e) {
 
 deleteBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    //we will use slice. works on arrays only
-    let inputArr = currentDisplay.value.split("");
 
-    let newOutput = inputArr.slice(0, -1).join("");
+    if(currentDisplay.value != "") {
+        //we will use slice. works on arrays only
+        let victim = currentDisplay.value.split("");
 
-    currentDisplay.value = newOutput;
+        let newOutput = victim.slice(0, -1).join("");
+
+        currentDisplay.value = newOutput;
+    }
+     //in the case where the user wants to delete an entry on the previous display, continuous clicking of the delete btn after the current screen is empty should bring the contents of the previous display to the current display.
+    else if(currentDisplay.value == "") {
+        let copyPrevious = previousDisplay.value;
+        currentDisplay.value = copyPrevious;
+        previousDisplay.value = "";
+    }
 });
 
 //setting the buttons to input numbers in the output screen
@@ -55,23 +64,51 @@ let numbers = document.querySelectorAll('.numbers');
 
 //setting the operands
     //the data in the input is pushed in as the value of the previous input;
+    //the operand sign is displayed on the screen(preferably)
     let operands = document.querySelectorAll('.math'); 
 
 
     for(let i = 0; i < operands.length; i++) {
         let operator = operands[i]; 
         operator.addEventListener('click', function(e){
-            if (currentDisplay.value !== "") {
+            if (currentDisplay.value !== "" && previousDisplay.value == "") {
                 previousDisplay.value = currentDisplay.value + operator.textContent;
                 currentDisplay.value = "";
+            }
+            
+            //if an operator was already input and the user clicks another operator,
+            else if(currentDisplay.value == "" && previousDisplay.value !== "") {
+                let copyPrevious = previousDisplay.value;
+                let newOutput = copyPrevious.split("").slice(0, -1).join("");
+                newOutput += operator.textContent;
+                previousDisplay.value = newOutput;
+            }
+            //if the user clicks a number after an operator, the number entered should be added to the value in the previous display after the operator
+            else if(previousDisplay.value !== "" && currentDisplay.value != "" && previousDisplay.value.split("").slice(-1) == "+") {
+                let newOutput = parseFloat(previousDisplay.value.split("").slice(0, -1).join("")) + parseFloat(currentDisplay.value);
+                let displayedOutput = newOutput.toString() 
+                currentDisplay.value = "";
+                displayedOutput += operator.textContent;
+
+                previousDisplay.value = displayedOutput;
+                
+            }
+
+            else if(previousDisplay.value !== "" && currentDisplay.value != "" && previousDisplay.value.split("").slice(-1) == "-") {
+                
+                let newOutput = parseFloat(previousDisplay.value.split("").slice(0, -1).join()) - parseFloat(currentDisplay.value);
+                let displayedOutput = newOutput.toString() 
+                currentDisplay.value = "";
+                displayedOutput += operator.textContent;
+
+                previousDisplay.value = displayedOutput;
+                
+                
             }
 
         })
 
-            // console.log(e);
     }
-
-    //the operand sign is displayed on the screen(preferably)
 
 
     //setting the result on the current display 
@@ -92,12 +129,16 @@ let numbers = document.querySelectorAll('.numbers');
                 currentDisplay.value = previousValue - currentValue;
             }
             //setting the multiplication sign
-            else if (lastCharacter = 'x') {
+            else if (lastCharacter == 'x' && currentDisplay.value !== "") {
                 currentDisplay.value = previousValue * currentValue;
             }
             //setting the divide button
-            else if (lastCharacter == '÷') {
-                currentDisplay.value = previousValue/currentValue
+            else if (lastCharacter == '÷' && currentDisplay.value !== "") {
+                currentDisplay.value = previousValue / currentValue
+            }
+            else if (lastCharacter == "+" || "-" || "x" || "÷" && typeof(previousValue) === "number" && currentDisplay.value === "") {
+                let outputValue = previousDisplay.value.split("").slice(0, -1).join("");
+                currentDisplay.value = outputValue;
             }
             
     // I need my app to listen for another button click after the result is displayed and if the button clicked is a number, I want the screen to be cleared and only show the new input on the display. 

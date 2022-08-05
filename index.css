@@ -12,9 +12,12 @@ body {
     align-items: center;
     margin: auto;
     background-color: rgb(0, 161, 161);
-
+    height: 100vh;
 }
 
+h1 {
+    margin-bottom: 10px;
+}
 .border {
     border: 2px solid black;
     box-shadow: 0px 0px 5px 5px gray;
